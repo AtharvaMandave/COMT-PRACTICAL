@@ -1,0 +1,93 @@
+section .data
+    msg1 db 'Enter first digit: ',0
+    len1 equ $ - msg1
+    msg2 db 'Enter second digit: ',0
+    len2 equ $ - msg2
+    msg3 db 'Sum is: ', 0
+    len3 equ $ - msg3
+
+section .bss
+    num1 resb 2
+    num2 resb 2
+    res resb 2
+
+section .text
+    global _start
+_start:
+    call _text1
+    call _getname1
+    call _text2
+    call _getname2
+    call _text3
+
+; Convert ASCII to integer
+
+;ASCII Value 8bit asnar pan ti value apan 64bit register madhe mov kartoy tar , remaining bits var ;“MOVZX” 0 taknar
+
+    movzx rax, byte [num1]
+    sub rax, '0'
+
+; Convert ASCII to integer
+    movzx rdi, byte [num2]
+    sub rdi, '0'
+
+;Add two numbers
+    add rax, rdi
+    add rax, '0'
+    mov [res], al
+
+;Print result
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, res
+    mov rdx, 2
+    syscall
+
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+;Print msg1
+_text1:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg1
+    mov rdx, len1
+    syscall 
+    ret
+
+;Take digit 1 input
+_getname1:
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, num1
+    mov rdx, 2
+    syscall 
+    ret    
+
+;Print msg2
+_text2:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg2
+    mov rdx, len2
+    syscall 
+    ret
+
+;Take digit 2 input
+_getname2:
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, num2
+    mov rdx, 2
+    syscall 
+    ret    
+
+;Print msg3 
+_text3:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg3
+    mov rdx, len3
+    syscall
+    ret
