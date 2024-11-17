@@ -1,0 +1,45 @@
+section .data
+    hexinput dw 0x1F4B          ; 
+    bcdout db 5 dup(0)          ; 
+    newline db 10, 0            ; 
+    ten dw 10                   ; 
+
+section .text
+    global _start
+
+_start:
+    ; Load hexadecimal input into AX
+    mov ax, [hexinput]          ; 
+    xor dx, dx                  ; 
+
+    ; Point to the end of BCD buffer
+    mov rdi, bcdout
+    add rdi, 4                  ; 
+
+convert_loop:
+    xor dx, dx                  ; 
+    div word [ten]              ; 
+    add dl, '0'                 ; 
+    mov byte [rdi], dl          ; 
+    dec rdi                     ; 
+    test ax, ax                 ; 
+    jnz convert_loop            ; 
+
+    ; Display the BCD output
+    mov rax, 1                  ; 
+    mov rdi, 1                  ; 
+    mov rsi, bcdout             ; 
+    mov rdx, 5                  ; 
+    syscall
+
+    ; Print newline
+    mov rax, 1                  ; 
+    mov rdi, 1                  ; 
+    mov rsi, newline            ; 
+    mov rdx, 1                  ; 
+    syscall
+
+    ; Exit program
+    mov rax, 60                 ; 
+    xor rdi, rdi                ; 
+    syscall
