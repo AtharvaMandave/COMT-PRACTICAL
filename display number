@@ -1,47 +1,32 @@
-section .bss                       ; BSS section for uninitialized data
-    num resb 20                    ; Reserve 20 bytes for user input
+section .data
+    prompt db 'Enter something: ', 0
+    promptLen equ $ - prompt
+    userLen equ 100
 
-section .data                      ; Data section for initialized data
-    prompt db 'Enter a number: ', 0xA  ; Prompt message with newline
-    prompt_len equ $ - prompt          ; Calculate length of prompt
-    len db 'The number is: ', 0xA      ; Output label with newline
-    len_len equ $ - len               ; Calculate length of label
+section .bss
+    userInput resb userLen
 
-section .text                      ; Text section for code
+section .text
     global _start
 _start:
-    ; Display the prompt
-    mov rax, 1                      ; Syscall: write
-    mov rdi, 1                      ; File descriptor: stdout
-    mov rsi, prompt                 ; Address of the prompt
-    mov rdx, prompt_len             ; Length of the prompt
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, prompt
+    mov rdx, promptLen
     syscall
 
-    ; Read user input
-    mov rax, 0                      ; Syscall: read
-    mov rdi, 0                      ; File descriptor: stdin
-    mov rsi, num                    ; Address to store user input
-    mov rdx, 20                     ; Max bytes to read
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, userInput
+    mov rdx, userLen
     syscall
 
-    ; Store the number of bytes read
-    mov rcx, rax                    ; Save the number of bytes read in RCX
-
-    ; Display the output label
-    mov rax, 1                      ; Syscall: write
-    mov rdi, 1                      ; File descriptor: stdout
-    mov rsi, len                    ; Address of the label
-    mov rdx, len_len                ; Length of the label
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, userInput
+    mov rdx, userLen
     syscall
 
-    ; Display the number entered
-    mov rax, 1                      ; Syscall: write
-    mov rdi, 1                      ; File descriptor: stdout
-    mov rsi, num                    ; Address of the input buffer
-    mov rdx, rcx                    ; Use the actual bytes read
-    syscall
-
-    ; Exit program
-    mov rax, 60                     ; Syscall: exit
-    xor rdi, rdi                    ; Exit code: 0
+    mov rax, 60
+    xor rdi, rdi
     syscall
